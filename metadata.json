@@ -1,0 +1,6 @@
+{
+  "name": "Reprodutor de música",
+  "description": "Reprodutor de música local futurista inspirado em Dragon Ball Z, com biblioteca automática do dispositivo e reprodução em segundo plano.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
