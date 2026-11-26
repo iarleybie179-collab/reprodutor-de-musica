@@ -1,0 +1,50 @@
+name: Build and publish APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK 36.1
+        run: sdkmanager --install "platforms;android-36.1" "build-tools;36.1.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.3.1'
+
+      - name: Create debug signing key
+        run: >-
+          keytool -genkeypair -v -keystore debug.keystore
+          -storepass android -keypass android -alias androiddebugkey
+          -dname "CN=Android Debug,O=Android,C=US"
+          -keyalg RSA -keysize 2048 -validity 10000
+
+      - name: Build APK
+        run: gradle --no-daemon :app:assembleDebug
+
+      - name: Publish APK release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v1.0.${{ github.run_number }}"
+          gh release create "$tag" app/build/outputs/apk/debug/app-debug.apk \
+            --title "Reprodutor de música $tag" \
+            --notes "APK debug instalável, gerado pelo GitHub Actions."
