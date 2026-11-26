@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "DBZ Ki Player"
+rootProject.name = "Reprodutor de música"
 
 include(":app")
